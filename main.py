@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-CryptoVault Pro - Professional Cryptography & Password Management System
-Main CLI Interface
+Main 
+
 """
 
 import sys
@@ -14,14 +14,20 @@ from rich.prompt import Prompt, Confirm
 from rich import box
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.text import Text
+import base64
+
+
 
 # Add current directory to path
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+
 
 from algorithms import symmetric, asymmetric, hashing
 from user_manager import UserManager, PasswordManager
 
 console = Console()
+
+
 
 
 class CryptoVaultCLI:
@@ -37,9 +43,9 @@ class CryptoVaultCLI:
         banner = """
 ╔═══════════════════════════════════════════════════════════╗
 ║                                                           ║
-║                    CRYPTO PROJECT                         ║
+║                 PROJECT CRYPTOGRAPHIE                     ║
 ║                                                           ║
-║     Professional Cryptography & Password Manager          ║
+║             Cryptography & Password Manager               ║
 ║                                                           ║
 ╚═══════════════════════════════════════════════════════════╝
         """
@@ -50,6 +56,7 @@ class CryptoVaultCLI:
         if not self.current_user:
             return self.auth_menu()
         
+        
         while True:
             console.clear()
             self.show_banner()
@@ -59,17 +66,17 @@ class CryptoVaultCLI:
             menu.add_column("Option", style="cyan bold", width=5)
             menu.add_column("Description", style="white")
             
-            menu.add_row("1", "👥 Manage Users")
-            menu.add_row("2", "🔑 Manage Passwords")
-            menu.add_row("3", "🔒 Encrypt/Decrypt Messages")
-            menu.add_row("4", "⚡ Test Cryptographic Algorithms")
-            menu.add_row("5", "🔐 Hash Passwords")
-            menu.add_row("6", "📊 Algorithm Comparison")
-            menu.add_row("0", "🚪 Logout")
+            menu.add_row("1", "[bold cyan] > [/bold cyan] Manage Users")
+            menu.add_row("2", "[bold cyan] > [/bold cyan] Manage Passwords")
+            menu.add_row("3", "[bold cyan] > [/bold cyan] Encrypt/Decrypt Messages")
+            menu.add_row("4", "[bold cyan] > [/bold cyan] Hash Passwords")
+            menu.add_row("5", "[bold cyan] > [/bold cyan] Algorithm Comparison")
+            menu.add_row("0", "[bold cyan] > [/bold cyan] Logout")
             
             console.print(menu)
+            #we prompte the user to choose an option from the menu, and we handle the choice accordingly
             
-            choice = Prompt.ask("\n[bold yellow]Choose an option[/bold yellow]", choices=['0','1','2','3','4','5','6'])
+            choice = Prompt.ask("\n[bold yellow]Choose an option[/bold yellow]", choices=['0','1','2','3','4','5'])
             
             if choice == '0':
                 self.current_user = None
@@ -84,11 +91,11 @@ class CryptoVaultCLI:
             elif choice == '3':
                 self.encrypt_decrypt_menu()
             elif choice == '4':
-                self.test_algorithms_menu()
-            elif choice == '5':
                 self.hash_menu()
-            elif choice == '6':
-                self.comparison_menu()
+            elif choice == "5":
+                from comparison import run_comparison
+                run_comparison()
+                input("\nPress Enter to continue...")
     
     def auth_menu(self):
         """Authentication menu"""
@@ -100,16 +107,16 @@ class CryptoVaultCLI:
             menu.add_column("Option", style="cyan bold", width=5)
             menu.add_column("Description", style="white")
             
-            menu.add_row("1", "🔓 Login")
-            menu.add_row("2", "📝 Register")
-            menu.add_row("0", "🚪 Exit")
+            menu.add_row("1", "[bold cyan] > [/bold cyan] Login")
+            menu.add_row("2", "[bold cyan] > [/bold cyan] Register")
+            menu.add_row("0", "[bold cyan] > [/bold cyan] Exit")
             
             console.print(menu)
             
             choice = Prompt.ask("\n[bold yellow]Choose an option[/bold yellow]", choices=['0','1','2'])
             
             if choice == '0':
-                console.print("\n[cyan]👋 Thank you for using CryptoVault Pro![/cyan]")
+                console.print("\n[cyan] Thank you for using our crypto system!![/cyan]")
                 sys.exit(0)
             elif choice == '1':
                 if self.login():
@@ -177,11 +184,11 @@ class CryptoVaultCLI:
             menu.add_column("Option", style="cyan bold", width=5)
             menu.add_column("Description", style="white")
             
-            menu.add_row("1", "📋 List All Users")
-            menu.add_row("2", "👁️  View User Info")
-            menu.add_row("3", "✏️  Modify User")
-            menu.add_row("4", "🗑️  Delete User")
-            menu.add_row("0", "⬅️  Back")
+            menu.add_row("1", "[bold cyan] > [/bold cyan] List All Users")
+            menu.add_row("2", "[bold cyan] > [/bold cyan] View User Info")
+            menu.add_row("3", "[bold cyan] > [/bold cyan] Modify User")
+            menu.add_row("4", "[bold cyan] > [/bold cyan] Delete User")
+            menu.add_row("0", "[bold cyan] > [/bold cyan] Back")
             
             console.print(menu)
             
@@ -273,6 +280,8 @@ class CryptoVaultCLI:
             return
         
         if Confirm.ask(f"[bold red]Are you sure you want to delete '{username}'?[/bold red]"):
+
+
             success, message = self.user_manager.delete_user(username)
             
             if success:
@@ -282,6 +291,9 @@ class CryptoVaultCLI:
             
             time.sleep(2)
     
+
+
+
     def manage_passwords_menu(self):
         """Password management submenu"""
         while True:
@@ -292,13 +304,13 @@ class CryptoVaultCLI:
             menu.add_column("Option", style="cyan bold", width=5)
             menu.add_column("Description", style="white")
             
-            menu.add_row("1", "📋 List Services")
-            menu.add_row("2", "➕ Add Password")
-            menu.add_row("3", "👁️  View Password")
-            menu.add_row("4", "✏️  Modify Password")
-            menu.add_row("5", "🗑️  Delete Password")
-            menu.add_row("6", "📊 Password Strength Check")
-            menu.add_row("0", "⬅️  Back")
+            menu.add_row("1", "[bold cyan] > [/bold cyan] List Services")
+            menu.add_row("2", "[bold cyan] > [/bold cyan] Add Password")
+            menu.add_row("3", "[bold cyan] > [/bold cyan] View Password")
+            menu.add_row("4", "[bold cyan] > [/bold cyan] Modify Password")
+            menu.add_row("5", "[bold cyan] > [/bold cyan] Delete Password")
+            menu.add_row("6", "[bold cyan] > [/bold cyan] Password Strength Check")
+            menu.add_row("0", "[bold cyan] > [/bold cyan] Back")
             
             console.print(menu)
             
@@ -318,6 +330,8 @@ class CryptoVaultCLI:
                 self.delete_password()
             elif choice == '6':
                 self.check_password_strength()
+
+
     
     def list_services(self):
         """List all services"""
@@ -357,6 +371,10 @@ class CryptoVaultCLI:
         
         time.sleep(2)
     
+
+
+
+
     def view_password(self):
         """View a password"""
         console.print("\n[bold cyan]═══ VIEW PASSWORD ═══[/bold cyan]")
@@ -454,16 +472,20 @@ class CryptoVaultCLI:
             menu.add_column("Option", style="cyan bold", width=5)
             menu.add_column("Description", style="white")
             
-            menu.add_row("1", "🔤 Caesar Cipher")
-            menu.add_row("2", "🔡 Vigenere Cipher")
-            menu.add_row("3", "🎲 Vernam Cipher (OTP)")
-            menu.add_row("4", "⚡ RC4 Stream Cipher")
+            menu.add_row("1", "🔐 Caesar Cipher")
+            menu.add_row("2", "🔐 Vigenere Cipher")
+            menu.add_row("3", "🔐 Vernam Cipher (XOR)")
+            menu.add_row("4", "🔐 RC4 Stream Cipher")
             menu.add_row("5", "🔐 RSA (Asymmetric)")
-            menu.add_row("0", "⬅️  Back")
+            menu.add_row("6", "🔐 CFB Mode")
+            menu.add_row("7", "🔐 DES Block Cipher")
+            menu.add_row("8", "🔐 ElGamal")
+            menu.add_row("9", "🔐 Diffie-Hellman")
+            menu.add_row("0", "🔐  Back")
             
             console.print(menu)
             
-            choice = Prompt.ask("\n[bold yellow]Choose an option[/bold yellow]", choices=['0','1','2','3','4','5'])
+            choice = Prompt.ask("\n[bold yellow]Choose an option[/bold yellow]", choices=['0','1','2','3','4','5','6','7','8','9'])
             
             if choice == '0':
                 return
@@ -477,26 +499,46 @@ class CryptoVaultCLI:
                 self.rc4_cipher_demo()
             elif choice == '5':
                 self.rsa_cipher_demo()
-    
+            elif choice == '6':
+                self.cfb_demo()
+            elif choice == '7':
+                self.des_cipher_demo()
+            elif choice == '8':
+                self.elgamal_cipher_demo()
+            elif choice == '9':
+                self.diffie_hellman_demo()
+
+            
+
+
+
+
+
+
     def caesar_cipher_demo(self):
-        """Caesar cipher demonstration"""
         console.print("\n[bold cyan]═══ CAESAR CIPHER ═══[/bold cyan]")
-        
+
         operation = Prompt.ask("Operation", choices=['encrypt', 'decrypt'])
         text = Prompt.ask("Text")
         key = int(Prompt.ask("Shift key (number)"))
-        
+
         if operation == 'encrypt':
             result = symmetric.cesar_cipher(text, key)
             console.print(f"\n[green]Encrypted:[/green] {result}")
         else:
             result = symmetric.cesar_decipher(text, key)
             console.print(f"\n[green]Decrypted:[/green] {result}")
-        
-        Prompt.ask("\n[dim]Press Enter to continue[/dim]", default="")
+
+            Prompt.ask("\n[dim]Press Enter to continue[/dim]", default="")
     
+
+
+
+
+
+
+
     def vigenere_cipher_demo(self):
-        """Vigenere cipher demonstration"""
         console.print("\n[bold cyan]═══ VIGENERE CIPHER ═══[/bold cyan]")
         
         operation = Prompt.ask("Operation", choices=['encrypt', 'decrypt'])
@@ -511,95 +553,318 @@ class CryptoVaultCLI:
             console.print(f"\n[green]Decrypted:[/green] {result}")
         
         Prompt.ask("\n[dim]Press Enter to continue[/dim]", default="")
+
     
+
+
+
+
+
+
+
     def vernam_cipher_demo(self):
-        """Vernam cipher demonstration"""
         console.print("\n[bold cyan]═══ VERNAM CIPHER (One-Time Pad) ═══[/bold cyan]")
-        
+
         operation = Prompt.ask("Operation", choices=['encrypt', 'decrypt'])
         text = Prompt.ask("Text")
         key = Prompt.ask("Key")
-        
+
         if operation == 'encrypt':
             result = symmetric.vernam_cipher(text, key)
-            console.print(f"\n[green]Encrypted:[/green] {result}")
+            console.print(f"\n[green]Encrypted (base64):[/green] {result}")
+
         else:
             result = symmetric.vernam_decipher(text, key)
             console.print(f"\n[green]Decrypted:[/green] {result}")
-        
+
         Prompt.ask("\n[dim]Press Enter to continue[/dim]", default="")
+
+
+
+
+
+
+
+    
     
     def rc4_cipher_demo(self):
-        """RC4 cipher demonstration"""
         console.print("\n[bold cyan]═══ RC4 STREAM CIPHER ═══[/bold cyan]")
-        
+
         operation = Prompt.ask("Operation", choices=['encrypt', 'decrypt'])
         text = Prompt.ask("Text")
         key = Prompt.ask("Key")
-        
+
         if operation == 'encrypt':
             result = symmetric.rc4_cipher(text, key)
-            console.print(f"\n[green]Encrypted:[/green] {repr(result)}")
+            console.print(f"\n[green]Encrypted (base64):[/green] {result}")
+
         else:
             result = symmetric.rc4_decipher(text, key)
             console.print(f"\n[green]Decrypted:[/green] {result}")
-        
+
         Prompt.ask("\n[dim]Press Enter to continue[/dim]", default="")
     
+
+
+
+
+
+
     def rsa_cipher_demo(self):
-        """RSA cipher demonstration"""
         console.print("\n[bold cyan]═══ RSA ASYMMETRIC ENCRYPTION ═══[/bold cyan]")
-        
+
         console.print("\n[yellow]Generating RSA keys...[/yellow]")
-        
-        # Use small primes for demo
+
         p = 61
         q = 53
-        
+
         public_key, private_key = asymmetric.generer_cles_rsa(p, q)
+
+        console.print(f"\n[cyan]Public Key:[/cyan] {public_key}")
+        console.print(f"[cyan]Private Key:[/cyan] {private_key}")
+
+        text = Prompt.ask("\nEnter text to encrypt")
+
+        encrypted = asymmetric.cryptage_rsa_texte(text, public_key)
+
+        console.print(f"\n[green]Encrypted (list):[/green] {encrypted}")
+
+        decrypted = asymmetric.decryptage_rsa_texte(encrypted, private_key)
+
+        console.print(f"[green]Decrypted:[/green] {decrypted}")
+
+        Prompt.ask("\n[dim]Press Enter to continue[/dim]", default="")
+
+
+
+    
+
+
+
+
+
+    def cfb_demo(self):
+        console.print("\n[bold cyan]═══ CFB MODE ═══[/bold cyan]")
+
+        operation = Prompt.ask("Operation", choices=["encrypt", "decrypt"])
+        text = Prompt.ask("Text")
+        key = Prompt.ask("Key")
+
+        if operation == "encrypt":
+            result = symmetric.cfb_encrypt(text, key)
+            # result is now bytes, so .hex() works
+            console.print(f"\n[green]Encrypted (hex):[/green] {result.hex()}")
+        else:
+        # user gives hex string → convert to bytes
+            try:
+                text_bytes = bytes.fromhex(text)
+            except ValueError:
+                console.print("[red]Invalid hex input[/red]")
+                Prompt.ask("\n[dim]Press Enter to continue[/dim]", default="")
+                return
+
+            result = symmetric.cfb_decrypt(text_bytes, key)
+            console.print(f"\n[green]Decrypted:[/green] {result}")
+
+        Prompt.ask("\n[dim]Press Enter to continue[/dim]", default="")
+
+
+
+
+
+
+
+
+    def des_cipher_demo(self):
+        console.print("\n[bold cyan]═══ DES BLOCK CIPHER ═══[/bold cyan]")
+
+        operation = Prompt.ask("Operation", choices=["encrypt", "decrypt"])
+        text = Prompt.ask("Text")
+        key = Prompt.ask("Key (any length)")
+
+        if operation == "encrypt":
+            cipher_hex = symmetric.des_encrypt(text, key)
+            console.print(f"\n[green]Encrypted (hex):[/green] {cipher_hex}")
+
+        else:
+            # Decrypt directly - des_decrypt already returns text
+            try:
+                cipher_hex = text.strip()
+                result = symmetric.des_decrypt(cipher_hex, key)
+                console.print(f"\n[green]Decrypted:[/green] {result}")
+            except ValueError:
+                console.print("[red]Invalid hex input[/red]")
+
+        Prompt.ask("\n[dim]Press Enter to continue[/dim]", default="")
+
+
+
+
+
+    def elgamal_cipher_demo(self):
+        console.print("\n[bold cyan]═══ EL-GAMAL ENCRYPTION ═══[/bold cyan]")
         
-        console.print(f"\n[cyan]Public Key (e, n):[/cyan] {public_key}")
-        console.print(f"[cyan]Private Key (d, n):[/cyan] {private_key}")
+        console.print("\n[yellow]Generating ElGamal keys...[/yellow]")
         
-        message = int(Prompt.ask("\nEnter numeric message (< n)"))
+        # Using small primes for demo
+        p = 467  # prime
+        g = 2    # generator
         
-        encrypted = asymmetric.cryptage_rsa(message, public_key[0], public_key[1])
-        console.print(f"\n[green]Encrypted:[/green] {encrypted}")
+        public_key, private_key = asymmetric.generer_cles_elgamal(p, g)
+        p_val, g_val, y_val = public_key
         
-        decrypted = asymmetric.decryptage_rsa(encrypted, private_key[0], private_key[1])
+        console.print(f"\n[cyan]Prime p:[/cyan] {p_val}")
+        console.print(f"[cyan]Generator g:[/cyan] {g_val}")
+        console.print(f"[cyan]Public key y = g^x mod p:[/cyan] {y_val}")
+        console.print(f"[cyan]Private key x:[/cyan] {private_key}")
+        
+        text = Prompt.ask("\nEnter text to encrypt")
+        
+        encrypted = asymmetric.cryptage_elgamal_texte(text, public_key)
+        
+        console.print(f"\n[green]Encrypted (c1, c2) pairs:[/green]")
+        console.print(f"{encrypted[:3]}..." if len(encrypted) > 3 else encrypted)
+        
+        decrypted = asymmetric.decryptage_elgamal_texte(encrypted, private_key, p_val)
+        
         console.print(f"[green]Decrypted:[/green] {decrypted}")
         
         Prompt.ask("\n[dim]Press Enter to continue[/dim]", default="")
+
+
+
+
+
+    def diffie_hellman_demo(self):
+        console.print("\n[bold cyan]═══ DIFFIE-HELLMAN KEY EXCHANGE ═══[/bold cyan]")
+
+        use_example = Prompt.ask(
+            "Use example (p=23, g=5, a=6, b=15)?",
+            choices=["y", "n"],
+            default="y"
+        )
+
+        if use_example == "y":
+            p, g = 23, 5
+            a, b = 6, 15
+        else:
+            p = int(Prompt.ask("Prime p"))
+            g = int(Prompt.ask("Generator g"))
+            a = int(Prompt.ask("Your secret (a)"))
+            b = int(Prompt.ask("Other secret (b)"))
+
+        # STEP 1
+        console.print(f"\n[cyan]Public parameters:[/cyan] p={p}, g={g}")
+
+        # STEP 2
+        console.print(f"[green]Secret a = {a}[/green]")
+        console.print(f"[blue]Secret b = {b}[/blue]")
+
+        # STEP 3
+        A = pow(g, a, p)
+        B = pow(g, b, p)
+
+        console.print(f"\n[green]A = g^a mod p = {A}[/green]")
+        console.print(f"[blue]B = g^b mod p = {B}[/blue]")
+
+        # STEP 4
+        K1 = pow(B, a, p)
+        K2 = pow(A, b, p)
+
+        console.print(f"\n[green]Shared key (you): {K1}[/green]")
+        console.print(f"[blue]Shared key (other): {K2}[/blue]")
+
+        if K1 != K2:
+            console.print("[red]ERROR: keys do not match[/red]")
+            return
+
+        # MESSAGE ENCRYPTION PART (nice for demo)
+        message = Prompt.ask("\nMessage to encrypt")
+
+        encrypted = asymmetric.diffie_hellman_chiffrer(message, K1)
+        decrypted = asymmetric.diffie_hellman_dechiffrer(encrypted, K1)
+
+        console.print(f"\n[cyan]Encrypted (hex):[/cyan] {encrypted.hex()}")
+        console.print(f"[cyan]Decrypted:[/cyan] {decrypted}")
+
+        Prompt.ask("\nPress Enter to continue", default="")
+
+
+
+
+
+
     
+
+    
+
+    
+
+
+
+
+
     def test_algorithms_menu(self):
         """Test algorithms menu"""
         console.clear()
         console.print(Panel("[bold cyan]⚡ ALGORITHM TESTING[/bold cyan]", box=box.DOUBLE))
-        
+
+        # ---------------- RC4 TEST ----------------
         console.print("\n[bold]Testing Symmetric Encryption (RC4)[/bold]")
         test_msg = "Hello CryptoVault!"
         test_key = "SECRET"
-        
+
         encrypted = symmetric.rc4_cipher(test_msg, test_key)
         decrypted = symmetric.rc4_decipher(encrypted, test_key)
-        
+
+        # SAFE HEX HANDLING
+        def safe_hex(data):
+            if isinstance(data, bytes):
+                return data.hex()
+            if isinstance(data, str):
+                return data.encode().hex()
+            return str(data)
+
         console.print(f"Original:  [cyan]{test_msg}[/cyan]")
-        console.print(f"Encrypted: [yellow]{repr(encrypted)}[/yellow]")
+        console.print(f"Encrypted: [yellow]{safe_hex(encrypted)}[/yellow]")
         console.print(f"Decrypted: [green]{decrypted}[/green]")
-        console.print(f"Match: [{'green' if test_msg == decrypted else 'red'}]{test_msg == decrypted}[/{'green' if test_msg == decrypted else 'red'}]")
-        
+        console.print(
+            f"Match: [{'green' if test_msg == decrypted else 'red'}]"
+            f"{test_msg == decrypted}[/{'green' if test_msg == decrypted else 'red'}]"
+        )
+
+        # ---------------- RSA TEST ----------------
         console.print("\n[bold]Testing Asymmetric Encryption (RSA)[/bold]")
+
         pub, priv = asymmetric.generer_cles_rsa(61, 53)
         msg = 42
+
         enc = asymmetric.cryptage_rsa(msg, pub[0], pub[1])
         dec = asymmetric.decryptage_rsa(enc, priv[0], priv[1])
-        
+
         console.print(f"Original:  [cyan]{msg}[/cyan]")
-        console.print(f"Encrypted: [yellow]{enc}[/yellow]")
+
+        # SAFE DISPLAY (RSA already int/list sometimes)
+        if isinstance(enc, (list, tuple)):
+            enc_display = str(enc)
+        else:
+            enc_display = str(enc)
+
+        console.print(f"Encrypted: [yellow]{enc_display}[/yellow]")
         console.print(f"Decrypted: [green]{dec}[/green]")
-        console.print(f"Match: [{'green' if msg == dec else 'red'}]{msg == dec}[/{'green' if msg == dec else 'red'}]")
-        
+        console.print(
+            f"Match: [{'green' if msg == dec else 'red'}]"
+            f"{msg == dec}[/{'green' if msg == dec else 'red'}]"
+        )
+
         Prompt.ask("\n[dim]Press Enter to continue[/dim]", default="")
+
+
+
+
+
+
+
     
     def hash_menu(self):
         """Hashing menu"""
@@ -621,6 +886,10 @@ class CryptoVaultCLI:
         console.print("\n", table)
         
         Prompt.ask("\n[dim]Press Enter to continue[/dim]", default="")
+
+
+
+
     
     def comparison_menu(self):
         """Algorithm comparison"""
@@ -647,7 +916,7 @@ class CryptoVaultCLI:
         
         # Vernam
         vernam_enc = symmetric.vernam_cipher(test_text, test_key)
-        table.add_row("Vernam", "OTP (XOR)", vernam_enc[:50] + "..." if len(vernam_enc) > 50 else vernam_enc)
+        table.add_row("Vernam", " (XOR)", vernam_enc[:50] + "..." if len(vernam_enc) > 50 else vernam_enc)
         
         # RC4
         rc4_enc = symmetric.rc4_cipher(test_text, test_key)
@@ -671,15 +940,29 @@ class CryptoVaultCLI:
         console.print(hash_table)
         
         Prompt.ask("\n[dim]Press Enter to continue[/dim]", default="")
+
+
+
+
     
+
+
     def run(self):
         """Run the application"""
         try:
             while True:
                 self.main_menu()
         except KeyboardInterrupt:
-            console.print("\n\n[cyan]👋 Thank you for using CryptoVault Pro![/cyan]")
+            console.print("\n\n[cyan] Thank you for using CryptoAPP Pro![/cyan]")
             sys.exit(0)
+
+
+
+
+
+
+
+
 
 
 if __name__ == "__main__":
