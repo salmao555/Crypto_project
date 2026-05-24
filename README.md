@@ -157,7 +157,7 @@ All algorithms are implemented **from scratch** without using external cryptogra
 
 ---
 
-## 🎯 Educational Value
+##  Educational Value
 
 This project demonstrates:
 
@@ -222,7 +222,7 @@ print(f"SHA-256: {hash_value}")
 
 ---
 
-## 🎨 Features Showcase
+##  Features Showcase
 
 ### Password Strength Analysis
 The system analyzes passwords based on:
@@ -241,13 +241,7 @@ Compare all symmetric algorithms side-by-side:
 
 ---
 
-## 🛡️ Security Notes
 
-**Educational Purpose**: This project is designed for learning cryptography concepts. For production use:
-- Use established libraries like `cryptography` or `PyCryptodome`
-- RSA key sizes should be ≥2048 bits (this demo uses smaller keys)
-- RC4 is deprecated; use AES for modern applications
-- Always use salt with password hashing (e.g., bcrypt, argon2)
 
 
 
