@@ -43,11 +43,6 @@ A comprehensive Python-based cryptography toolkit featuring user management, pas
   - Custom implementation from scratch
   - Matches official `hashlib` output
 
-### 📊 Additional Features
-- **Algorithm Comparison** - Side-by-side testing of all algorithms
-- **Interactive Testing** - Test each algorithm with custom inputs
-- **Beautiful CLI** - Rich terminal interface with colors and tables
-- **Data Persistence** - Encrypted JSON storage
 
 ---
 
